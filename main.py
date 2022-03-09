@@ -27,7 +27,7 @@ async def on_message(message):
             msg = parser.parse(message)
             await message.channel.send(msg)
         else:
-            msg = Replier(message.content).run()
+            msg = Replier(message).run()
             if msg is not None:
                 await message.channel.send(msg)
 
