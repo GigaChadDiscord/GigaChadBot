@@ -3,13 +3,11 @@
 import os
 import discord
 from dotenv import load_dotenv
-
-from parser import Parser
-
+from Modules.CodeRunner.coderunner import CodeRunner
+from Modules.QuizColab.quizcolab import QuizColab
 from Modules.Replier.replier import Replier
 
 client = discord.Client()
-parser = Parser()
 
 
 @client.event
@@ -24,10 +22,14 @@ async def on_ready():
 async def on_message(message):
     if message.author != client.user:
         if message.content.startswith('$'):
-            msg = parser.parse(message)
-            await message.channel.send(msg)
+            if message.content.startswith('$python'):
+                msg = CodeRunner().parse(message)
+            elif message.content.startswith('$quiz'):
+                msg = QuizColab().parse(message)
+            # if message.content.startswith('$valo'):
+            #     msg = Valorant(message).parse()
         else:
-            msg = Replier(message).run()
+            msg = Replier().parse(message)
             if msg is not None:
                 await message.channel.send(msg)
 

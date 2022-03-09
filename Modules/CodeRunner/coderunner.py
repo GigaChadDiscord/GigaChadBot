@@ -4,19 +4,22 @@ import contextlib
 
 
 class CodeRunner:
-    def __init__(self, lang, code):
-        self.lang = lang
-        self.code = code
+    def __init__(self):
+        pass
 
-    def run(self):
-        if self.lang == "python":
-            return self.runPython()
+    def parse(self, message):
+        message = message.content[8:]
+        if message.startswith('help'):
+            return self.helper_box()
+        if message.startswith('python'):
+            code = message[message.index("```") + 3:message.rindex("```")]
+            return self.runPython(code)
         else:
             return "Language not supported"
 
-    def runPython(self):
+    def runPython(self, code):
         with self.stdoutIO() as s:
-            exec(self.code)
+            exec(code)
         return s.getvalue()
 
     @contextlib.contextmanager
