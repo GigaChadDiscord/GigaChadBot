@@ -20,7 +20,7 @@ class Replier:
             r = random.randint(1, p)
             print(r)
             if r == 1:
-                return f"Your face is {self.message}"
+                return f"Your face is {self.message.content}"
             if r == 2:
                 return "Dint knew"
             if r == 3:
