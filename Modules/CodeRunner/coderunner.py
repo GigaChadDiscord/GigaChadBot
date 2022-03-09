@@ -11,11 +11,11 @@ class CodeRunner:
         message = message.content[8:]
         if message.startswith('help'):
             return self.helper_box()
-        if message.startswith('python'):
+        elif message.startswith('```') and message.endswith('```'):
             code = message[message.index("```") + 3:message.rindex("```")]
             return self.runPython(code)
         else:
-            return "Language not supported"
+            return "Invalid command"
 
     def runPython(self, code):
         with self.stdoutIO() as s:
