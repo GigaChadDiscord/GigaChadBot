@@ -7,7 +7,7 @@ class Replier:
     def __init__(self):
         self.probability_of_triggered_reply = 30
         self.probability_of_normal_reply = 40
-        self.probability_of_question_reply = 10
+        self.probability_of_question_reply = 6
 
     def parse(self, message):
         if message.content:
