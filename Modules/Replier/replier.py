@@ -15,7 +15,7 @@ class Replier:
     def parse(self, message):
         if message.content:
             if message.content[-1] == '?':
-                self.dice_question.roll()
+                print(self.dice_question.roll())
             else:
                 dice_reply = Dice(self.probability_of_normal_reply)
                 dice_reply.add_value(f"Your face is {message.content}")
