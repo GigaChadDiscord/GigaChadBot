@@ -2,12 +2,18 @@
 
 import os
 import discord
+from discord.utils import get
 from dotenv import load_dotenv
 from Modules.CodeRunner.coderunner import CodeRunner
 from Modules.QuizColab.quizcolab import QuizColab
 from Modules.Replier.replier import Replier
+from Utils.dice import Dice
 
 client = discord.Client()
+
+probability_reaction = 1
+dice_reaction = Dice(probability_reaction)
+dice_reaction.values = [1]
 
 
 @client.event
@@ -29,7 +35,11 @@ async def on_message(message):
             # if message.content.startswith('$valo'):
             #     msg = Valorant(message).parse()
         else:
+            if dice_reaction.roll() == 1:
+                emoji = get(client.get_all_emojis(), name='EmojiName')
+                await client.add_reaction(message, emoji)
             msg = Replier().parse(message)
+            
         if msg is not None:
             await message.channel.send(msg)
 
