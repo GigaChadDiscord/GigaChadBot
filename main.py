@@ -12,7 +12,7 @@ from Modules.Snipe.snipe import Snipe
 
 client = discord.Client()
 
-probability_reaction = 1
+probability_reaction = 25
 dice_reaction = Dice(probability_reaction)
 dice_reaction.values = [1]
 
