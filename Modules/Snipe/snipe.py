@@ -5,38 +5,30 @@ class Snipe:
     def __init__(self):
         pass
 
-    def snipe(self, message):
+    def parse(self, message):
         if message.content.startswith('$snipe'):
-            msg = message.content.split('$snipe')[1]
             # Get deleted message from Temp/snipe.json
             deletedMsg = json.loads(open('Temp/snipe.json', 'r').read())['deleted']
             return deletedMsg
         elif message.content.startswith('$editsnipe'):
             # Get edited message from Temp/snipe.json
-            deletedMsg = json.loads(open('Temp/snipe.json', 'r').read())['edited']
-            return deletedMsg
+            editedMsg = json.loads(open('Temp/snipe.json', 'r').read())['edited']
+            return editedMsg
         else:
             print('Invalid Snipe command')
 
-    def runPython(self, code):
-        with self.stdoutIO() as s:
-            start = time()
-            exec(code)
-            total_time = time() - start
-        msg = self.prettify(s.getvalue(), total_time * 1000)
-        return msg
-
-    @contextlib.contextmanager
-    def stdoutIO(self, stdout=None):
-        old = sys.stdout
-        if stdout is None:
-            stdout = StringIO()
-        sys.stdout = stdout
-        yield stdout
-        sys.stdout = old
-
     def prettify(self, output, total_time):
         return f"```py\n{output}\n```\n> Total time: {total_time:.2f}ms"
+    
+    def save(self, message, type_):
+        if type_ == 'deleted':
+            temp = json.loads(open('Temp/snipe.json', 'r').read())
+            temp['deleted'] = message.content
+            open('Temp/snipe.json', 'w').write(json.dumps(temp))
+        elif type_ == 'edited':
+            temp = json.loads(open('Temp/snipe.json', 'r').read())
+            temp['edited'] = message.content
+            open('Temp/snipe.json', 'w').write(json.dumps(temp))
 
     def helper_box(self):
         return '''
