@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from Modules.CodeRunner.coderunner import CodeRunner
 from Modules.QuizColab.quizcolab import QuizColab
 from Modules.Replier.replier import Replier
+from Modules.Replier.snipe import Snipe
 
 client = discord.Client()
 
@@ -26,6 +27,8 @@ async def on_message(message):
                 msg = CodeRunner().parse(message)
             elif message.content.startswith('$quiz'):
                 msg = QuizColab().parse(message)
+            elif message.content.startswith('$snipe'):
+                msg = Snipe().snipe(message)
             # if message.content.startswith('$valo'):
             #     msg = Valorant(message).parse()
         else:
