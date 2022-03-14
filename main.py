@@ -40,7 +40,7 @@ async def on_message(message):
         else:
             if dice_reaction.roll() == 1:
                 emoji = "💀"
-                await client.add_reaction(message, emoji)
+                await message.add_reaction(emoji)
             msg = Replier().parse(message)
             
         if msg is not None:
