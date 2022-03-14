@@ -5,9 +5,9 @@ class Replier:
     TRIGGER_WORDS = []
 
     def __init__(self):
-        self.probability_of_triggered_reply = 10
-        self.probability_of_normal_reply = 20
-        self.probability_of_question_reply = 4
+        self.probability_of_triggered_reply = 30
+        self.probability_of_normal_reply = 40
+        self.probability_of_question_reply = 10
 
     def parse(self, message):
         if message.content:
@@ -25,3 +25,7 @@ class Replier:
                     return "Dint knew"
                 if r == 3:
                     return "Really?"
+                if r == 4:
+                    return "sus"
+                if r == 5:
+                    return "nou"

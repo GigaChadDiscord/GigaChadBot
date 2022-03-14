@@ -30,8 +30,8 @@ async def on_message(message):
             #     msg = Valorant(message).parse()
         else:
             msg = Replier().parse(message)
-            if msg is not None:
-                await message.channel.send(msg)
+        if msg is not None:
+            await message.channel.send(msg)
 
 if __name__ == '__main__':
     load_dotenv()
