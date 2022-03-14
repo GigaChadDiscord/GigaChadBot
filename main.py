@@ -39,7 +39,7 @@ async def on_message(message):
             #     msg = Valorant(message).parse()
         else:
             if dice_reaction.roll() == 1:
-                emoji = get(client.get_all_emojis(), name='skull')
+                emoji = "💀"
                 await client.add_reaction(message, emoji)
             msg = Replier().parse(message)
             
