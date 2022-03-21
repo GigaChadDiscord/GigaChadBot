@@ -7,14 +7,16 @@ from dotenv import load_dotenv
 from Modules.CodeRunner.coderunner import CodeRunner
 from Modules.QuizColab.quizcolab import QuizColab
 from Modules.Replier.replier import Replier
+from Modules.Reddit.reddit import Reddit
 from Utils.dice import Dice
 from Modules.Snipe.snipe import Snipe
+import io
+import aiohttp
 
 client = discord.Client()
 
 probability_reaction = 25
-dice_reaction = Dice(probability_reaction)
-dice_reaction.values = [1]
+dice_reaction = Dice(probability_reaction, probability=False)
 
 
 @client.event
@@ -35,6 +37,8 @@ async def on_message(message):
                 msg = QuizColab().parse(message)
             elif message.content.startswith('$snipe') or message.content.startswith('$editsnipe'):
                 msg = Snipe().parse(message)
+            elif message.content.startswith('$meme'):
+                msg = Reddit().parse(message)
             # if message.content.startswith('$valo'):
             #     msg = Valorant(message).parse()
         else:
@@ -59,7 +63,7 @@ async def on_message_edit(before, after):
     if before.author != client.user:
         print(before.content)
         Snipe().save(before, 'edited')
-
+    
 if __name__ == '__main__':
     load_dotenv()
     client.run(os.getenv('DISCORD_TOKEN'))
