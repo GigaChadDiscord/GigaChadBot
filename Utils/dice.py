@@ -12,6 +12,15 @@ class Dice():
             return self.values[roll-1]
         return None
 
+    def get_values(self):
+        return self.values
+    
     def add_value(self, value):
         self.values.append(value)
+
+    def set_sides(self, sides):
+        self.sides = sides
+
+    def get_sides(self):
+        return self.sides
     
