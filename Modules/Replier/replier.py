@@ -6,9 +6,9 @@ class Replier:
     def __init__(self):
         self.TRIGGER_WORDS = []
 
-        self.probability_of_triggered_reply = 30
-        self.probability_of_normal_reply = 40
-        self.probability_of_question_reply = 6
+        self.probability_of_triggered_reply = 20
+        self.probability_of_normal_reply = 30
+        self.probability_of_question_reply = 5
 
         self.dice_question = ReplyDice(self.probability_of_question_reply)
         self.dice_question.add_reply("Perhaps")
