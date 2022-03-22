@@ -15,9 +15,12 @@ client = discord.Client()
 code_runner = CodeRunner()
 replier = Replier()
 quiz_colab = QuizColab()
-reddit = Reddit()
+reddit = None
+try:
+    reddit = Reddit()
+except Exception as e:
+    print(e)
 snipe = Snipe()
-reddit = Reddit()
 
 probability_reaction = 25
 dice_reaction = BooleanDice(probability_reaction)
