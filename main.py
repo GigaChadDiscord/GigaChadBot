@@ -8,15 +8,19 @@ from Modules.CodeRunner.coderunner import CodeRunner
 from Modules.QuizColab.quizcolab import QuizColab
 from Modules.Replier.replier import Replier
 from Modules.Reddit.reddit import Reddit
-from Utils.dice import Dice
+from Utils.dice import Dice, BooleanDice, ReplyDice
 from Modules.Snipe.snipe import Snipe
-import io
-import aiohttp
 
 client = discord.Client()
+code_runner = CodeRunner()
+replier = Replier()
+quiz_colab = QuizColab()
+reddit = Reddit()
+snipe = Snipe()
+reddit = Reddit()
 
 probability_reaction = 25
-dice_reaction = Dice(probability_reaction, probability=False)
+dice_reaction = BooleanDice(probability_reaction)
 
 
 @client.event
@@ -32,17 +36,17 @@ async def on_message(message):
     if message.author != client.user:
         if message.content.startswith('$'):
             if message.content.startswith('$python'):
-                msg = CodeRunner().parse(message)
+                msg = code_runner.parse(message)
             elif message.content.startswith('$quiz'):
-                msg = QuizColab().parse(message)
+                msg = quiz_colab.parse(message)
             elif message.content.startswith('$snipe') or message.content.startswith('$editsnipe'):
-                msg = Snipe().parse(message)
+                msg = snipe.parse(message)
             elif message.content.startswith('$meme'):
-                msg = Reddit().parse(message)
+                msg = reddit.parse(message)
             # if message.content.startswith('$valo'):
             #     msg = Valorant(message).parse()
         else:
-            if dice_reaction.roll() == 1:
+            if dice_reaction.roll():
                 emoji = "💀"
                 await message.add_reaction(emoji)
             msg = Replier().parse(message)
