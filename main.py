@@ -8,6 +8,7 @@ from Modules.CodeRunner.coderunner import CodeRunner
 from Modules.QuizColab.quizcolab import QuizColab
 from Modules.Replier.replier import Replier
 from Modules.Reddit.reddit import Reddit
+from Modules.Gpay.gpay import Gpay
 from Utils.dice import Dice, BooleanDice, ReplyDice
 from Modules.Snipe.snipe import Snipe
 
@@ -21,6 +22,7 @@ try:
 except Exception as e:
     print(e)
 snipe = Snipe()
+gpay = Gpay()
 
 probability_reaction = 25
 dice_reaction = BooleanDice(probability_reaction)
@@ -46,6 +48,12 @@ async def on_message(message):
                 msg = snipe.parse(message)
             elif message.content.startswith('$meme'):
                 msg = reddit.parse(message)
+            elif message.content.startswith('$gpay'):
+                for user in message.mentions:
+                    await user.avatar_url.save("Temp/gpay_receiver.png")
+                msg = gpay.parse(message)
+                
+                # await message.channel.send(file=discord.File('Temp/gpay_edited.png'))
             # if message.content.startswith('$valo'):
             #     msg = Valorant(message).parse()
         else:
@@ -54,7 +62,7 @@ async def on_message(message):
                 await message.add_reaction(emoji)
             msg = Replier().parse(message)
             
-        if msg is not None:
+        if msg and type(msg) is str:
             await message.channel.send(msg)
 
 
