@@ -53,7 +53,7 @@ async def on_message(message):
                     await user.avatar_url.save("Temp/gpay_receiver.png")
                 msg = gpay.parse(message)
                 
-                # await message.channel.send(file=discord.File('Temp/gpay_edited.png'))
+                await message.channel.send(file=discord.File('Temp/gpay_edited.png'))
             # if message.content.startswith('$valo'):
             #     msg = Valorant(message).parse()
         else:
