@@ -6,17 +6,17 @@ class Snipe:
         print('Snipe initialized')
         pass
 
-    def parse(self, message):
-        if message.content.startswith('$snipe'):
-            # Get deleted message from Temp/snipe.json
-            deletedMsg = json.loads(open('Temp/snipe.json', 'r').read())['deleted']
-            return deletedMsg
-        elif message.content.startswith('$editsnipe'):
-            # Get edited message from Temp/snipe.json
-            editedMsg = json.loads(open('Temp/snipe.json', 'r').read())['edited']
-            return editedMsg
-        else:
-            print('Invalid Snipe command')
+    # def parse(self, message):
+    #     if message.content.startswith('$snipe'):
+    #         # Get deleted message from Temp/snipe.json
+    #         deletedMsg = json.loads(open('Temp/snipe.json', 'r').read())['deleted']
+    #         return deletedMsg
+    #     elif message.content.startswith('$editsnipe'):
+    #         # Get edited message from Temp/snipe.json
+    #         editedMsg = json.loads(open('Temp/snipe.json', 'r').read())['edited']
+    #         return editedMsg
+    #     else:
+    #         print('Invalid Snipe command')
 
     def prettify(self, output, total_time):
         return f"```py\n{output}\n```\n> Total time: {total_time:.2f}ms"

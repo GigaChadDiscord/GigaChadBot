@@ -3,6 +3,7 @@
 import os
 import discord
 from discord.utils import get
+from discord.ext import commands
 from dotenv import load_dotenv
 from Modules.CodeRunner.coderunner import CodeRunner
 from Modules.QuizColab.quizcolab import QuizColab
@@ -11,9 +12,10 @@ from Modules.Reddit.reddit import Reddit
 from Modules.Gpay.gpay import Gpay
 from Utils.dice import Dice, BooleanDice, ReplyDice
 from Modules.Snipe.snipe import Snipe
+import json
 import argparse
 
-client = discord.Client()
+bot = commands.Bot(command_prefix="-")
 code_runner = CodeRunner()
 replier = Replier()
 quiz_colab = QuizColab()
@@ -22,7 +24,6 @@ try:
     reddit = Reddit()
 except Exception as e:
     print(e)
-snipe = Snipe()
 gpay = Gpay()
 
 probability_reaction = 25
@@ -30,60 +31,102 @@ dice_reaction = ReplyDice(probability_reaction)
 dice_reaction.add_reply("💀")
 
 
-@client.event
+@bot.event
 async def on_ready():
     print('Logged in as')
-    print(client.user.name)
-    print(client.user.id)
+    print(bot.user.name)
+    print(bot.user.id)
     print('------')
 
 
-@client.event
+@bot.event
 async def on_message(message):
-    msg = None
     print(f"{message.author.name} sent '{message.content}'")
-    if message.author != client.user:
-        if message.content.startswith('$'):
-            if message.content.startswith('$python'):
-                msg = code_runner.parse(message)
-            elif message.content.startswith('$quiz'):
-                msg = quiz_colab.parse(message)
-            elif message.content.startswith('$snipe') or message.content.startswith('$editsnipe'):
-                msg = snipe.parse(message)
-            elif message.content.startswith('$meme'):
-                msg = reddit.parse(message)
-            elif message.content.startswith('$gpay'):
-                for user in message.mentions:
-                    await user.avatar_url_as(static_format='png', size=256).save("Temp/gpay_receiver.png")
-                msg = gpay.parse(message)
-                
-                if msg == "success":
-                    await message.channel.send(file=discord.File('Temp/gpay_edited.png'))
-                    msg = None
-            # if message.content.startswith('$valo'):
-            #     msg = Valorant(message).parse()
-        else:
+    ctx = await bot.get_context(message)
+    if ctx.valid:
+        await bot.process_commands(message)
+    else:
+        if message.author != bot.user:
             emoji = dice_reaction.roll()
             if emoji:
                 await message.add_reaction(emoji)
-            msg = replier.parse(message)
-            
+            msg = replier.parse(message)  
         if msg is not None and msg != "":
             await message.channel.send(msg)
 
 
 # Save deleted message in Temp/snipe.json
-@client.event
+@bot.event
 async def on_message_delete(message):
-    if message.author != client.user:
-        snipe.save(message, 'deleted')
+    if message.author != bot.user:
+        Snipe.save(message, 'deleted')
 
 # Save edited message in Temp/snipe.json
-@client.event
+@bot.event
 async def on_message_edit(before, after):
-    if before.author != client.user:
+    if before.author != bot.user:
         print(before.content)
-        snipe.save(before, 'edited')
+        Snipe.save(before, 'edited')
+
+@bot.command(
+    name='python',
+)
+async def python_parsing(ctx):
+    msg = code_runner.parse(ctx.message)
+    if msg is not None and msg != "":
+        await ctx.channel.send(msg)
+
+@bot.command(
+    name='quiz',
+)
+async def quiz_parsing(ctx):
+    msg = quiz_colab.parse(ctx.message)
+    if msg is not None and msg != "":
+        await ctx.channel.send(msg)
+
+@bot.command(
+    name='snipe',
+)
+async def snipe_parsing(ctx):
+    msg = json.loads(open('Temp/snipe.json', 'r').read())['deleted']
+    if msg is not None and msg != "":
+        await ctx.channel.send(msg)
+
+@bot.command(
+    name='editsnipe',
+)
+async def editsnipe_parsing(ctx):
+    msg = json.loads(open('Temp/snipe.json', 'r').read())['edited']
+    if msg is not None and msg != "":
+        await ctx.channel.send(msg)
+
+@bot.command(
+    name='reddit',
+)
+async def reddit_parsing(ctx):
+    msg = reddit.parse(ctx.message)
+    if msg is not None and msg != "":
+        await ctx.channel.send(msg)
+
+@bot.command(
+    name='gpay',
+)
+async def gpay_parsing(ctx):
+    for user in ctx.message.mentions:
+        await user.avatar_url_as(static_format='png', size=256).save("Temp/gpay_receiver.png")
+    msg = gpay.parse(ctx.message)
+    if msg == "success":
+        await ctx.channel.send(file=discord.File('Temp/gpay_edited.png'))
+    else:
+        await ctx.channel.send(msg)
+
+# @bot.command(
+#     name='valo',
+# )
+# async def valo_parsing(ctx):
+#     msg = Valorant(ctx).parse()
+#     if msg is not None and msg != "":
+#         await ctx.channel.send(msg)
 
 if __name__ == '__main__':
     load_dotenv()
@@ -92,7 +135,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     if args.test:
         print("Running in test mode")
-        client.run(os.getenv('DISCORD_TEST_TOKEN'))
+        bot.run(os.getenv('DISCORD_TEST_TOKEN'))
     else:
         print("Running in production mode")
-        client.run(os.getenv('DISCORD_TOKEN'))
+        bot.run(os.getenv('DISCORD_TOKEN'))
