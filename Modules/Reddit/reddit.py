@@ -21,7 +21,7 @@ class Reddit:
         # send our request for an OAuth token
         res = requests.post('https://www.reddit.com/api/v1/access_token',
                             auth=auth, data=data, headers=self.headers)
-        print(res)
+        
         # convert response to JSON and pull access_token value
         TOKEN = res.json()['access_token']
 
@@ -30,6 +30,7 @@ class Reddit:
 
         # while the token is valid (~2 hours) we just add headers=headers to our requests
         requests.get('https://oauth.reddit.com/api/v1/me', headers=self.headers)
+        print("Reddit initialized")
 
     def parse(self, message):
         """

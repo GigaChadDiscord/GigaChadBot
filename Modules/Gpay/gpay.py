@@ -11,11 +11,11 @@ import glob
 
 class Gpay:
     def __init__(self):
-        
         # Custom font style and font size
         self.myFont45 = ImageFont.truetype('Utils/Fonts/Helvetica.ttf', 45)
         self.myFont47 = ImageFont.truetype('Utils/Fonts/Helvetica.ttf', 47)
         self.myFont80 = ImageFont.truetype('Utils/Fonts/Helvetica.ttf', 150)
+        print("Gpay initialized")
     
     def parse(self, message):
 

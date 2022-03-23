@@ -25,7 +25,8 @@ snipe = Snipe()
 gpay = Gpay()
 
 probability_reaction = 25
-dice_reaction = BooleanDice(probability_reaction)
+dice_reaction = ReplyDice(probability_reaction)
+dice_reaction.add_reply("💀")
 
 
 @client.event
@@ -39,6 +40,7 @@ async def on_ready():
 @client.event
 async def on_message(message):
     msg = None
+    print(f"{message.author.name} sent '{message.content}'")
     if message.author != client.user:
         if message.content.startswith('$'):
             if message.content.startswith('$python'):
@@ -60,10 +62,10 @@ async def on_message(message):
             # if message.content.startswith('$valo'):
             #     msg = Valorant(message).parse()
         else:
-            if dice_reaction.roll():
-                emoji = "💀"
+            emoji = dice_reaction.roll()
+            if emoji:
                 await message.add_reaction(emoji)
-            msg = Replier().parse(message)
+            msg = replier.parse(message)
             
         if msg is not None and msg != "":
             await message.channel.send(msg)
@@ -73,15 +75,15 @@ async def on_message(message):
 @client.event
 async def on_message_delete(message):
     if message.author != client.user:
-        Snipe().save(message, 'deleted')
+        snipe.save(message, 'deleted')
 
 # Save edited message in Temp/snipe.json
 @client.event
 async def on_message_edit(before, after):
     if before.author != client.user:
         print(before.content)
-        Snipe().save(before, 'edited')
-    
+        snipe.save(before, 'edited')
+
 if __name__ == '__main__':
     load_dotenv()
     client.run(os.getenv('DISCORD_TOKEN'))

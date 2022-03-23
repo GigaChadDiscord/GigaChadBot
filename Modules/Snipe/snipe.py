@@ -3,6 +3,7 @@ import json
 
 class Snipe:
     def __init__(self):
+        print('Snipe initialized')
         pass
 
     def parse(self, message):

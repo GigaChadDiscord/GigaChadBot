@@ -6,6 +6,7 @@ from time import time
 
 class CodeRunner:
     def __init__(self):
+        print('CodeRunner initialized')
         pass
 
     def parse(self, message):

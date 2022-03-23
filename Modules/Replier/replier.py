@@ -19,6 +19,7 @@ class Replier:
         self.dice_reply.add_reply("Really?")
         self.dice_reply.add_reply("sus")
         self.dice_reply.add_reply("nou")
+        print("Replier initialized")
 
     def parse(self, message):
         if message.content:
