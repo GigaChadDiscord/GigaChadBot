@@ -1,5 +1,9 @@
+import logging
 import random
 from Utils.dice import Dice, BooleanDice, ReplyDice
+
+logger = logging.getLogger('gigachad')
+
 
 class Replier:
 
@@ -19,7 +23,7 @@ class Replier:
         self.dice_reply.add_reply("Really?")
         self.dice_reply.add_reply("sus")
         self.dice_reply.add_reply("nou")
-        print("Replier initialized")
+        logger.info("Replier initialized")
 
     def parse(self, message):
         if message.content:

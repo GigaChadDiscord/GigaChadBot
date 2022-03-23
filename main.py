@@ -1,6 +1,8 @@
 # Main Discord Runner
 
+import logging
 import os
+import sys
 import discord
 from discord.utils import get
 from discord.ext import commands
@@ -10,11 +12,16 @@ from Modules.QuizColab.quizcolab import QuizColab
 from Modules.Replier.replier import Replier
 from Modules.Reddit.reddit import Reddit
 from Modules.Gpay.gpay import Gpay
+from Utils.Logger import startLogger
 from Utils.dice import Dice, BooleanDice, ReplyDice
 from Modules.Snipe.snipe import Snipe
 import json
 import argparse
 
+startLogger('gigachad')
+logger = logging.getLogger('gigachad')
+
+# Init Modules
 bot = commands.Bot(command_prefix="-")
 code_runner = CodeRunner()
 replier = Replier()
@@ -23,7 +30,7 @@ reddit = None
 try:
     reddit = Reddit()
 except Exception as e:
-    print(e)
+    logger.error('Reddit module failed to load: {}'.format(e))
 gpay = Gpay()
 
 probability_reaction = 25
@@ -33,15 +40,11 @@ dice_reaction.add_reply("💀")
 
 @bot.event
 async def on_ready():
-    print('Logged in as')
-    print(bot.user.name)
-    print(bot.user.id)
-    print('------')
+    logger.info(f'Logged in as {bot.user.name}')
 
 
 @bot.event
 async def on_message(message):
-    print(f"{message.author.name} sent '{message.content}'")
     ctx = await bot.get_context(message)
     if ctx.valid:
         await bot.process_commands(message)
@@ -68,7 +71,6 @@ async def on_message_delete(message):
 @bot.event
 async def on_message_edit(before, after):
     if before.author != bot.user:
-        print(before.content)
         Snipe.save(before, 'edited')
 
 
@@ -143,8 +145,8 @@ if __name__ == '__main__':
     parser.add_argument("-t", "--test", help="Runs script using test bot token", action="store_true")
     args = parser.parse_args()
     if args.test:
-        print("Running in test mode")
+        logger.info("Running in test mode")
         bot.run(os.getenv('DISCORD_TEST_TOKEN'))
     else:
-        print("Running in production mode")
+        logger.info("Running in production mode")
         bot.run(os.getenv('DISCORD_TOKEN'))

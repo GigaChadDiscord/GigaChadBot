@@ -1,12 +1,15 @@
+import logging
 import sys
 from io import StringIO
 import contextlib
 from time import time
 
+logger = logging.getLogger('gigachad')
+
 
 class CodeRunner:
     def __init__(self):
-        print('CodeRunner initialized')
+        logger.info('CodeRunner initialized')
         self.m_validArgs = ['--save', '--test', '--public', '--private']
         self.saves = {}
 
@@ -16,7 +19,6 @@ class CodeRunner:
             return self.helper_box()
         # Process
         cmd = message.content.lstrip('-python ')
-        print('{}'.format(cmd))
         args = self.getArgs(cmd)
         if not self.checkArgs(args):
             return 'Invalid arguments'
@@ -33,7 +35,6 @@ class CodeRunner:
 
     def getArgs(self, cmd: str):
         args = cmd[:min(cmd.index('\n'), cmd.index('```'))].split()
-        print('args: {}'.format(args))
         if '--save' not in args and '--test' not in args:
             args.append('--save')
         if '--public' not in args and '--private' not in args:
@@ -41,7 +42,6 @@ class CodeRunner:
         return args
 
     def checkArgs(self, args):
-        print(args)
         validArgsCheck = all(param in self.m_validArgs for param in args)
         testSaveCheck = False if '--save' in args and '--test' in args else True
         return validArgsCheck and testSaveCheck
