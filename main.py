@@ -11,6 +11,7 @@ from Modules.Reddit.reddit import Reddit
 from Modules.Gpay.gpay import Gpay
 from Utils.dice import Dice, BooleanDice, ReplyDice
 from Modules.Snipe.snipe import Snipe
+import argparse
 
 client = discord.Client()
 code_runner = CodeRunner()
@@ -86,4 +87,12 @@ async def on_message_edit(before, after):
 
 if __name__ == '__main__':
     load_dotenv()
-    client.run(os.getenv('DISCORD_TOKEN'))
+    parser = argparse.ArgumentParser(description='A test program.')
+    parser.add_argument("-t", "--test", help="Runs script using test bot token", action="store_true")
+    args = parser.parse_args()
+    if args.test:
+        print("Running in test mode")
+        client.run(os.getenv('DISCORD_TEST_TOKEN'))
+    else:
+        print("Running in production mode")
+        client.run(os.getenv('DISCORD_TOKEN'))

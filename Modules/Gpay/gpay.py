@@ -98,6 +98,3 @@ class Gpay:
         self.img.save("Temp/gpay_edited.png")
 
         return "success"
-
-gpay = Gpay()
-gpay.process_image(100000000, "abhinav", "test", "test", "test")
