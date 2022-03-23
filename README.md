@@ -1,1 +1,1 @@
-# CrackedBot
+# GigaChad Discord Bot
