@@ -38,6 +38,7 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+    msg = None
     if message.author != client.user:
         if message.content.startswith('$'):
             if message.content.startswith('$python'):
@@ -50,10 +51,12 @@ async def on_message(message):
                 msg = reddit.parse(message)
             elif message.content.startswith('$gpay'):
                 for user in message.mentions:
-                    await user.avatar_url.save("Temp/gpay_receiver.png")
+                    await user.avatar_url_as(static_format='png', size=256).save("Temp/gpay_receiver.png")
                 msg = gpay.parse(message)
                 
-                await message.channel.send(file=discord.File('Temp/gpay_edited.png'))
+                # if msg == "success":
+                #     await message.channel.send(file=discord.File('Temp/gpay_edited.png'))
+                #     msg = None
             # if message.content.startswith('$valo'):
             #     msg = Valorant(message).parse()
         else:
@@ -62,7 +65,7 @@ async def on_message(message):
                 await message.add_reaction(emoji)
             msg = Replier().parse(message)
             
-        if msg and type(msg) is str:
+        if msg is not None and msg != "":
             await message.channel.send(msg)
 
 
