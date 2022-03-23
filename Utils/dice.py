@@ -28,7 +28,6 @@ class ReplyDice(Dice):
         self.replies = list(replies)
 
     def roll(self):
-        print(self.replies)
         if super().roll() == 1 and self.replies:
             reply = self.replies[random.randint(0, len(self.replies)-1)]
             print(f"Replied with {reply}")
