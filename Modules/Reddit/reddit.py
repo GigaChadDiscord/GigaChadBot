@@ -1,7 +1,11 @@
+import logging
 import requests
 import os
 from dotenv import load_dotenv
 from Utils.dice import Dice
+
+logger = logging.getLogger('gigachad')
+
 
 class Reddit:
     def __init__(self):
@@ -12,12 +16,12 @@ class Reddit:
 
         # here we pass our login method (password), username, and password
         self.data = {'grant_type': 'password',
-                'username': os.getenv('REDDIT_USERNAME'),
-                'password': os.getenv('REDDIT_PASSWORD')}
+                     'username': os.getenv('REDDIT_USERNAME'),
+                     'password': os.getenv('REDDIT_PASSWORD')}
 
         self.init_headers()
 
-        print("Reddit initialized")
+        logger.info("Reddit initialized")
 
     def init_headers(self):
         self.headers = {'User-Agent': 'Discord:GigaChad:0.01 (by /u/GigaChadDiscord)'}
@@ -25,7 +29,7 @@ class Reddit:
         # send our request for an OAuth token
         res = requests.post('https://www.reddit.com/api/v1/access_token',
                             auth=self.auth, data=self.data, headers=self.headers)
-        
+
         # convert response to JSON and pull access_token value
         TOKEN = res.json()['access_token']
 
@@ -44,7 +48,7 @@ class Reddit:
         params = message.content.split()
         if not self.verify_headers():
             self.init_headers()
-            print("Reddit headers reauthorized")
+            logger.debug("Reddit headers reauthorized")
         if len(params) == 1:
             return None
         elif len(params) == 2:
@@ -52,7 +56,7 @@ class Reddit:
             subreddit = self.get_name_subreddit(fuzzy_subreddit)
             if not subreddit:
                 return f"There is no subreddit by the name of {fuzzy_subreddit}"
-            post_link= self.get_random_meme_from_subreddit(subreddit)
+            post_link = self.get_random_meme_from_subreddit(subreddit)
             return post_link
 
     def verify_headers(self):
@@ -75,11 +79,11 @@ class Reddit:
         # get the top post from the subreddit
 
         res = requests.get("https://oauth.reddit.com/api/subreddit_autocomplete_v2",
-                    headers=self.headers,
-                    params={'typeahead_active': 'true', 'query':query, 'limit':1, 'include_profiles':'false'}).json()
+                           headers=self.headers,
+                           params={'typeahead_active': 'true', 'query': query, 'limit': 1, 'include_profiles': 'false'}).json()
         if not res['data']['children']:
             return None
-        print(f"got subreddit {res['data']['children'][0]['data']['display_name']}")
+        logger.debug(f"got subreddit {res['data']['children'][0]['data']['display_name']}")
         return res['data']['children'][0]['data']['display_name']
 
     def get_random_meme_from_subreddit(self, subreddit):
@@ -92,4 +96,3 @@ class Reddit:
         res = requests.get("https://oauth.reddit.com/r/{}/random".format(subreddit), headers=self.headers).json()
 
         return res[0]['data']['children'][0]['data']['url']
-
