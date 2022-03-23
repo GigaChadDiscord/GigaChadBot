@@ -1,7 +1,7 @@
 import random
 import warnings
 
-class Dice():
+class Dice:
     def __init__(self, sides):
         self.sides = sides
 
@@ -25,7 +25,7 @@ class ReplyDice(Dice):
 
     def __init__(self, sides, replies=[]):
         super().__init__(sides)
-        self.replies = replies
+        self.replies = list(replies)
 
     def roll(self):
         if super().roll() == 1 and self.replies:

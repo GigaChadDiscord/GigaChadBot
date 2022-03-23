@@ -8,28 +8,32 @@ class Reddit:
         load_dotenv()
 
         # note that CLIENT_ID refers to 'personal use script' and SECRET_TOKEN to 'token'
-        auth = requests.auth.HTTPBasicAuth(os.getenv('REDDIT_CLIENT_ID'), os.getenv('REDDIT_SECRET_TOKEN'))
+        self.auth = requests.auth.HTTPBasicAuth(os.getenv('REDDIT_CLIENT_ID'), os.getenv('REDDIT_SECRET_TOKEN'))
 
         # here we pass our login method (password), username, and password
-        data = {'grant_type': 'password',
+        self.data = {'grant_type': 'password',
                 'username': os.getenv('REDDIT_USERNAME'),
                 'password': os.getenv('REDDIT_PASSWORD')}
 
-        # setup our header info, which gives reddit a brief description of our app
+        self.init_headers()
+
+        print("Reddit initialized")
+
+    def init_headers(self):
         self.headers = {'User-Agent': 'Discord:GigaChad:0.01 (by /u/GigaChadDiscord)'}
 
         # send our request for an OAuth token
         res = requests.post('https://www.reddit.com/api/v1/access_token',
-                            auth=auth, data=data, headers=self.headers)
-        print(res)
+                            auth=self.auth, data=self.data, headers=self.headers)
+        
         # convert response to JSON and pull access_token value
         TOKEN = res.json()['access_token']
 
         # add authorization to our headers dictionary
         self.headers = {**self.headers, **{'Authorization': f"bearer {TOKEN}"}}
 
-        # while the token is valid (~2 hours) we just add headers=headers to our requests
-        requests.get('https://oauth.reddit.com/api/v1/me', headers=self.headers)
+        # # while the token is valid (~2 hours) we just add headers=headers to our requests
+        # requests.get('https://oauth.reddit.com/api/v1/me', headers=self.headers)
 
     def parse(self, message):
         """
@@ -38,13 +42,29 @@ class Reddit:
         :return: random meme from subreddit
         """
         params = message.content.split()
+        if not self.verify_headers():
+            self.init_headers()
+            print("Reddit headers reauthorized")
         if len(params) == 1:
             return None
         elif len(params) == 2:
             fuzzy_subreddit = params[1]
             subreddit = self.get_name_subreddit(fuzzy_subreddit)
+            if not subreddit:
+                return f"There is no subreddit by the name of {fuzzy_subreddit}"
             post_link= self.get_random_meme_from_subreddit(subreddit)
             return post_link
+
+    def verify_headers(self):
+        """
+        Verifies that the headers are valid
+        :return: True if headers are valid, False otherwise
+        """
+        res = requests.get('https://oauth.reddit.com/api/v1/me', headers=self.headers)
+        if res.status_code == 200:
+            return True
+        else:
+            return False
 
     def get_name_subreddit(self, query):
         """
@@ -53,9 +73,12 @@ class Reddit:
         :return: top post from subreddit
         """
         # get the top post from the subreddit
+
         res = requests.get("https://oauth.reddit.com/api/subreddit_autocomplete_v2",
                     headers=self.headers,
                     params={'typeahead_active': 'true', 'query':query, 'limit':1, 'include_profiles':'false'}).json()
+        if not res['data']['children']:
+            return None
         print(f"got subreddit {res['data']['children'][0]['data']['display_name']}")
         return res['data']['children'][0]['data']['display_name']
 
