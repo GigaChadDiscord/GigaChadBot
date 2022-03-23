@@ -4,7 +4,6 @@ from PIL import ImageDraw
 from PIL import ImageFont
 from PIL import ImageColor
 from datetime import datetime
-import numpy as np
 import pytz
 
 import glob
