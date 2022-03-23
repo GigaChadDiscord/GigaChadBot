@@ -25,7 +25,7 @@ class ReplyDice(Dice):
 
     def __init__(self, sides, replies=[]):
         super().__init__(sides)
-        self.replies = replies
+        self.replies = list(replies)
 
     def roll(self):
         print(self.replies)
@@ -39,7 +39,6 @@ class ReplyDice(Dice):
         return self.replies
     
     def add_reply(self, reply):
-        print(self.replies)
         self.replies.append(reply)
         if len(self.replies) > self.sides:
             warnings.warn(f"Too many replies added to dice. Only {self.sides} replies will be used.")
