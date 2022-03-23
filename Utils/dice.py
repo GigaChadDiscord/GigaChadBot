@@ -1,7 +1,7 @@
 import random
 import warnings
 
-class Dice():
+class Dice:
     def __init__(self, sides):
         self.sides = sides
 
@@ -28,6 +28,7 @@ class ReplyDice(Dice):
         self.replies = replies
 
     def roll(self):
+        print(self.replies)
         if super().roll() == 1 and self.replies:
             reply = self.replies[random.randint(0, len(self.replies)-1)]
             print(f"Replied with {reply}")
@@ -38,6 +39,7 @@ class ReplyDice(Dice):
         return self.replies
     
     def add_reply(self, reply):
+        print(self.replies)
         self.replies.append(reply)
         if len(self.replies) > self.sides:
             warnings.warn(f"Too many replies added to dice. Only {self.sides} replies will be used.")
