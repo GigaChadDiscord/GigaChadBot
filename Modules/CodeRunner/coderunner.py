@@ -7,20 +7,44 @@ from time import time
 class CodeRunner:
     def __init__(self):
         print('CodeRunner initialized')
-        pass
+        self.m_validArgs = ['--save', '--test', '--public', '--private']
+        self.saves = {}
 
     def parse(self, message):
-        message = message.content[8:]
-        if message.startswith('help'):
-            print('CodeRunner Help Module')
+        # Remove "-python " from the message
+        if message.content == '-python':
             return self.helper_box()
-        elif message.startswith('```') or message.startswith('\n```'):
-            print('CodeRunner runPython Module')
-            code = message[message.index("```") + 3:message.rindex("```")]
-            print(f'"""{code}""""')
-            return self.runPython(code)
-        else:
-            return "Invalid command"
+        # Process
+        cmd = message.content.lstrip('-python ')
+        print('{}'.format(cmd))
+        args = self.getArgs(cmd)
+        if not self.checkArgs(args):
+            return 'Invalid arguments'
+
+        code = cmd[cmd.index("```") + 3:cmd.rindex("```")]
+        if '--save' in args:
+            self.save(message, args, cmd)
+        return self.runPython(code)
+
+    def save(self, message, args, code):
+        self.code[message.author.id] = {}
+        self.code[message.author.id]['code'] = code
+        self.code[message.author.id]['access'] = 'private' if '--private' in args else 'public'
+
+    def getArgs(self, cmd: str):
+        args = cmd[:min(cmd.index('\n'), cmd.index('```'))].split()
+        print('args: {}'.format(args))
+        if '--save' not in args and '--test' not in args:
+            args.append('--save')
+        if '--public' not in args and '--private' not in args:
+            args.append('--public')
+        return args
+
+    def checkArgs(self, args):
+        print(args)
+        validArgsCheck = all(param in self.m_validArgs for param in args)
+        testSaveCheck = False if '--save' in args and '--test' in args else True
+        return validArgsCheck and testSaveCheck
 
     def runPython(self, code):
         with self.stdoutIO() as s:
@@ -46,6 +70,6 @@ class CodeRunner:
         return '''
         ```
         Use the command like:
-        $python `​`​`print('Hello World') `​`​`
+        -python `​`​`print('Hello World') `​`​`
         ```
         '''
