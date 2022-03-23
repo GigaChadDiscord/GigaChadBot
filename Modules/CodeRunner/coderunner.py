@@ -14,9 +14,10 @@ class CodeRunner:
         if message.startswith('help'):
             print('CodeRunner Help Module')
             return self.helper_box()
-        elif message.startswith('```') and message.endswith('```'):
+        elif message.startswith('```') or message.startswith('\n```'):
             print('CodeRunner runPython Module')
             code = message[message.index("```") + 3:message.rindex("```")]
+            print(f'"""{code}""""')
             return self.runPython(code)
         else:
             return "Invalid command"
@@ -39,7 +40,7 @@ class CodeRunner:
         sys.stdout = old
 
     def prettify(self, output, total_time):
-        return f"```py\n{output}\n```\n> Total time: {total_time:.2f}ms"
+        return f"```\n{output}\n```\n> Total time: {total_time:.2f}ms"
 
     def helper_box(self):
         return '''

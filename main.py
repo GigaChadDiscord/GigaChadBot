@@ -46,11 +46,12 @@ async def on_message(message):
     if ctx.valid:
         await bot.process_commands(message)
     else:
+        msg = None
         if message.author != bot.user:
             emoji = dice_reaction.roll()
             if emoji:
                 await message.add_reaction(emoji)
-            msg = replier.parse(message)  
+            msg = replier.parse(message)
         if msg is not None and msg != "":
             await message.channel.send(msg)
 
@@ -62,11 +63,14 @@ async def on_message_delete(message):
         Snipe.save(message, 'deleted')
 
 # Save edited message in Temp/snipe.json
+
+
 @bot.event
 async def on_message_edit(before, after):
     if before.author != bot.user:
         print(before.content)
         Snipe.save(before, 'edited')
+
 
 @bot.command(
     name='python',
@@ -76,6 +80,7 @@ async def python_parsing(ctx):
     if msg is not None and msg != "":
         await ctx.channel.send(msg)
 
+
 @bot.command(
     name='quiz',
 )
@@ -83,6 +88,7 @@ async def quiz_parsing(ctx):
     msg = quiz_colab.parse(ctx.message)
     if msg is not None and msg != "":
         await ctx.channel.send(msg)
+
 
 @bot.command(
     name='snipe',
@@ -92,6 +98,7 @@ async def snipe_parsing(ctx):
     if msg is not None and msg != "":
         await ctx.channel.send(msg)
 
+
 @bot.command(
     name='editsnipe',
 )
@@ -100,6 +107,7 @@ async def editsnipe_parsing(ctx):
     if msg is not None and msg != "":
         await ctx.channel.send(msg)
 
+
 @bot.command(
     name='reddit',
 )
@@ -107,6 +115,7 @@ async def reddit_parsing(ctx):
     msg = reddit.parse(ctx.message)
     if msg is not None and msg != "":
         await ctx.channel.send(msg)
+
 
 @bot.command(
     name='gpay',
