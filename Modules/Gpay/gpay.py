@@ -31,7 +31,7 @@ class Gpay:
             return "You cannot send money to yourself bro"
         if not params[2].isdigit():
             return "You have to enter a valid amount bro"
-        if "69" in amount:
+        if "69" in params[2]:
             return "Mu me lele 69"
         
         receiver = message.mentions[0]
