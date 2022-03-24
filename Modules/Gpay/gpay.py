@@ -21,37 +21,6 @@ class Gpay(commands.Cog):
         self.myFont80 = ImageFont.truetype('Utils/Fonts/Helvetica.ttf', 150)
         logger.info("Gpay initialized")
 
-    # def parse(self, message):
-
-    #     content = message.content
-    #     params = content.split(' ')
-    #     if len(params) < 3:
-    #         return "'$gpay' requires 2 parameters.\nExample: '$gpay <user> <amount>'"
-    #     if len(params) > 3:
-    #         return "Too many parameters bro, '$gpay' requires 2 parameters.\nExample: '$gpay <user> <amount>'"
-    #     if not message.mentions:
-    #         return "You haven't mentioned anyone bro"
-    #     if message.mentions[0].id == message.author.id:
-    #         return "You cannot send money to yourself bro"
-    #     if not params[2].isdigit():
-    #         return "You have to enter a valid amount bro"
-    #     if "69" in params[2]:
-    #         return "Mu me lele 69"
-
-    #     receiver = message.mentions[0]
-    #     amount = int(params[2])
-
-    #     if amount > 999999999:
-    #         return "You cannot send more than ₹999,999,999 bro"
-
-    #     receiver_name = receiver.name
-    #     receiver_nickname = receiver.display_name
-    #     author = message.author
-    #     author_name = author.name
-    #     author_nickname = author.display_name
-
-    #     return self.process_image(amount, receiver_name, receiver_nickname, author_name, author_nickname)
-
     @commands.command(
         name='gpay',
         help='Send money through Google pay to a user and show receipt',
@@ -69,11 +38,18 @@ class Gpay(commands.Cog):
             await ctx.send("Mu me lele 69")
             return
         
+        if amount == int(amount):
+            amount = int(amount)
+        else:
+            amount = round(amount, 2)
+        
         receiver_name = receiver.name
         receiver_nickname = receiver.display_name
         author = ctx.author
         author_name = author.name
         author_nickname = author.display_name
+
+        await receiver.avatar_url_as(static_format='png', size=256).save("Temp/gpay_receiver.png")
 
         self.process_image(amount, receiver_name, receiver_nickname, author_name, author_nickname)
 
@@ -81,7 +57,6 @@ class Gpay(commands.Cog):
 
 
     def process_image(self, amount, receiver_name, receiver_nickname, author_name, author_nickname):
-
         # Open an Image
         self.img = Image.open("Modules/Gpay/gpay.png")
 

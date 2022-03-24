@@ -25,8 +25,6 @@ logger = logging.getLogger('gigachad')
 bot = commands.Bot(command_prefix="-")
 code_runner = CodeRunner()
 replier = Replier()
-quiz_colab = QuizColab()
-# gpay = Gpay()
 
 probability_reaction = 25
 dice_reaction = ReplyDice(probability_reaction)
@@ -38,6 +36,8 @@ async def on_ready():
     logger.info(f'Logged in as {bot.user.name}')
     bot.add_cog(Reddit(bot))
     bot.add_cog(Gpay(bot))
+    bot.add_cog(Snipe(bot))
+    logger.info(f'{bot.user.name} is ready!')
 
 
 @bot.event
@@ -93,45 +93,6 @@ async def python_parsing(ctx):
     msg = code_runner.parse(ctx.message)
     if msg is not None and msg != "":
         await ctx.channel.send(msg)
-
-
-@bot.command(
-    name='quiz',
-)
-async def quiz_parsing(ctx):
-    msg = quiz_colab.parse(ctx.message)
-    if msg is not None and msg != "":
-        await ctx.channel.send(msg)
-
-
-@bot.command(
-    name='snipe',
-)
-async def snipe_parsing(ctx):
-    msg = json.loads(open('Temp/snipe.json', 'r').read())['deleted']
-    if msg is not None and msg != "":
-        await ctx.channel.send(msg)
-
-
-@bot.command(
-    name='editsnipe',
-)
-async def editsnipe_parsing(ctx):
-    msg = json.loads(open('Temp/snipe.json', 'r').read())['edited']
-    if msg is not None and msg != "":
-        await ctx.channel.send(msg)
-
-# @bot.command(
-#     name='gpay',
-# )
-# async def gpay_parsing(ctx):
-#     for user in ctx.message.mentions:
-#         await user.avatar_url_as(static_format='png', size=256).save("Temp/gpay_receiver.png")
-#     msg = gpay.parse(ctx.message)
-#     if msg == "success":
-#         await ctx.channel.send(file=discord.File('Temp/gpay_edited.png'))
-#     else:
-#         await ctx.channel.send(msg)
 
 if __name__ == '__main__':
     load_dotenv()

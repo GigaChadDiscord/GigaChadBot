@@ -43,26 +43,6 @@ class Reddit(commands.Cog):
         # # while the token is valid (~2 hours) we just add headers=headers to our requests
         # requests.get('https://oauth.reddit.com/api/v1/me', headers=self.headers)
 
-    # def parse(self, message):
-    #     """
-    #     Parses a message for a subreddit and returns a random meme from that subreddit
-    #     :param message: message to parse
-    #     :return: random meme from subreddit
-    #     """
-    #     params = message.content.split()
-    #     if not self.verify_headers():
-    #         self.init_headers()
-    #         logger.debug("Reddit headers reauthorized")
-    #     if len(params) == 1:
-    #         return None
-    #     elif len(params) == 2:
-    #         fuzzy_subreddit = params[1]
-    #         subreddit = self.get_name_subreddit(fuzzy_subreddit)
-    #         if not subreddit:
-    #             return f"There is no subreddit by the name of {fuzzy_subreddit}"
-    #         post_link = self.get_random_meme_from_subreddit(subreddit)
-    #         return post_link
-
     @commands.command(
         name='reddit', 
         aliases=['r', 'meme'],
