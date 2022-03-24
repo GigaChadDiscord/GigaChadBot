@@ -26,11 +26,11 @@ bot = commands.Bot(command_prefix="-")
 code_runner = CodeRunner()
 replier = Replier()
 quiz_colab = QuizColab()
-reddit = None
-try:
-    reddit = Reddit()
-except Exception as e:
-    logger.error('Reddit module failed to load: {}'.format(e))
+# reddit = None
+# try:
+#     reddit = Reddit()
+# except Exception as e:
+#     logger.error('Reddit module failed to load: {}'.format(e))
 gpay = Gpay()
 
 probability_reaction = 25
@@ -41,6 +41,7 @@ dice_reaction.add_reply("💀")
 @bot.event
 async def on_ready():
     logger.info(f'Logged in as {bot.user.name}')
+    bot.add_cog(Reddit(bot))
 
 
 @bot.event
@@ -110,13 +111,13 @@ async def editsnipe_parsing(ctx):
         await ctx.channel.send(msg)
 
 
-@bot.command(
-    name='reddit',
-)
-async def reddit_parsing(ctx):
-    msg = reddit.parse(ctx.message)
-    if msg is not None and msg != "":
-        await ctx.channel.send(msg)
+# @bot.command(
+#     name='reddit',
+# )
+# async def reddit_parsing(ctx):
+#     msg = reddit.parse(ctx.message)
+#     if msg is not None and msg != "":
+#         await ctx.channel.send(msg)
 
 
 @bot.command(
