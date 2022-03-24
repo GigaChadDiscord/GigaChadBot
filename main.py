@@ -26,12 +26,7 @@ bot = commands.Bot(command_prefix="-")
 code_runner = CodeRunner()
 replier = Replier()
 quiz_colab = QuizColab()
-# reddit = None
-# try:
-#     reddit = Reddit()
-# except Exception as e:
-#     logger.error('Reddit module failed to load: {}'.format(e))
-gpay = Gpay()
+# gpay = Gpay()
 
 probability_reaction = 25
 dice_reaction = ReplyDice(probability_reaction)
@@ -42,6 +37,7 @@ dice_reaction.add_reply("💀")
 async def on_ready():
     logger.info(f'Logged in as {bot.user.name}')
     bot.add_cog(Reddit(bot))
+    bot.add_cog(Gpay(bot))
 
 
 @bot.event
@@ -67,12 +63,27 @@ async def on_message_delete(message):
         Snipe.save(message, 'deleted')
 
 # Save edited message in Temp/snipe.json
-
-
 @bot.event
 async def on_message_edit(before, after):
     if before.author != bot.user:
         Snipe.save(before, 'edited')
+
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandNotFound):
+        await ctx.send("Command not found bro, try `-help`")
+    elif isinstance(error, commands.MemberNotFound):
+        await ctx.send("Member not found bro")
+    elif isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send(f"You are missing a required argument bro, try `-help {ctx.command.name}`")
+    elif isinstance(error, commands.BadArgument):
+        await ctx.send(f"You have entered an invalid argument bro, try `-help {ctx.command.name}`")
+    elif isinstance(error, commands.CommandOnCooldown):
+        await ctx.send(f"You are on cooldown bro, try again in {error.retry_after:.2f} seconds")
+    elif isinstance(error, commands.CheckFailure):
+        await ctx.send("You don't have permission to use this command bro")
+    else:
+        logger.error(error)
 
 
 @bot.command(
@@ -110,34 +121,16 @@ async def editsnipe_parsing(ctx):
     if msg is not None and msg != "":
         await ctx.channel.send(msg)
 
-
 # @bot.command(
-#     name='reddit',
+#     name='gpay',
 # )
-# async def reddit_parsing(ctx):
-#     msg = reddit.parse(ctx.message)
-#     if msg is not None and msg != "":
-#         await ctx.channel.send(msg)
-
-
-@bot.command(
-    name='gpay',
-)
-async def gpay_parsing(ctx):
-    for user in ctx.message.mentions:
-        await user.avatar_url_as(static_format='png', size=256).save("Temp/gpay_receiver.png")
-    msg = gpay.parse(ctx.message)
-    if msg == "success":
-        await ctx.channel.send(file=discord.File('Temp/gpay_edited.png'))
-    else:
-        await ctx.channel.send(msg)
-
-# @bot.command(
-#     name='valo',
-# )
-# async def valo_parsing(ctx):
-#     msg = Valorant(ctx).parse()
-#     if msg is not None and msg != "":
+# async def gpay_parsing(ctx):
+#     for user in ctx.message.mentions:
+#         await user.avatar_url_as(static_format='png', size=256).save("Temp/gpay_receiver.png")
+#     msg = gpay.parse(ctx.message)
+#     if msg == "success":
+#         await ctx.channel.send(file=discord.File('Temp/gpay_edited.png'))
+#     else:
 #         await ctx.channel.send(msg)
 
 if __name__ == '__main__':

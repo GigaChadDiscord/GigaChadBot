@@ -66,7 +66,8 @@ class Reddit(commands.Cog):
     @commands.command(
         name='reddit', 
         aliases=['r', 'meme'],
-        help = 'Get a random meme from a subreddit'
+        help = 'Get a random meme from a subreddit',
+        usage='<subreddit>'
     )
     async def reddit_command(self, ctx, *, fuzzy_subreddit=None):
         """
