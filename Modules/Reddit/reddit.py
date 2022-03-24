@@ -1,5 +1,7 @@
 import logging
 import requests
+import discord
+from discord.ext import commands
 import os
 from dotenv import load_dotenv
 from Utils.dice import Dice
@@ -7,8 +9,10 @@ from Utils.dice import Dice
 logger = logging.getLogger('gigachad')
 
 
-class Reddit:
-    def __init__(self):
+class Reddit(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
         load_dotenv()
 
         # note that CLIENT_ID refers to 'personal use script' and SECRET_TOKEN to 'token'
@@ -39,25 +43,33 @@ class Reddit:
         # # while the token is valid (~2 hours) we just add headers=headers to our requests
         # requests.get('https://oauth.reddit.com/api/v1/me', headers=self.headers)
 
-    def parse(self, message):
+    @commands.command(
+        name='reddit', 
+        aliases=['r', 'meme'],
+        help = 'Get a random meme from a subreddit',
+        usage='<subreddit>'
+    )
+    async def reddit_command(self, ctx, *, fuzzy_subreddit=None):
         """
-        Parses a message for a subreddit and returns a random meme from that subreddit
-        :param message: message to parse
-        :return: random meme from subreddit
+        Gets a random post from a subreddit
+        :param ctx: context of command
+        :param subreddit: subreddit to get random post from
+        :return: random post from subreddit
         """
-        params = message.content.split()
         if not self.verify_headers():
             self.init_headers()
             logger.debug("Reddit headers reauthorized")
-        if len(params) == 1:
-            return None
-        elif len(params) == 2:
-            fuzzy_subreddit = params[1]
-            subreddit = self.get_name_subreddit(fuzzy_subreddit)
-            if not subreddit:
-                return f"There is no subreddit by the name of {fuzzy_subreddit}"
-            post_link = self.get_random_meme_from_subreddit(subreddit)
-            return post_link
+
+        if not fuzzy_subreddit:
+            return await ctx.send("Please specify a subreddit")
+
+        subreddit = self.get_name_subreddit(fuzzy_subreddit)
+
+        if not subreddit:
+            return await ctx.send(f"There is no subreddit by the name of {fuzzy_subreddit}")
+
+        post_link = self.get_random_meme_from_subreddit(subreddit)
+        await ctx.send(post_link)
 
     def verify_headers(self):
         """
@@ -72,9 +84,9 @@ class Reddit:
 
     def get_name_subreddit(self, query):
         """
-        Gets the top post from a subreddit
-        :param subreddit: subreddit to get top post from
-        :return: top post from subreddit
+        Gets the name of closest subreddit
+        :param subreddit: subreddit query
+        :return: name of subreddit
         """
         # get the top post from the subreddit
 

@@ -6,52 +6,57 @@ from PIL import ImageFont
 from PIL import ImageColor
 from datetime import datetime
 import pytz
-import glob
+import discord
+from discord.ext import commands
 
 logger = logging.getLogger('gigachad')
 
 
-class Gpay:
-    def __init__(self):
+class Gpay(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
         # Custom font style and font size
         self.myFont45 = ImageFont.truetype('Utils/Fonts/Helvetica.ttf', 45)
         self.myFont47 = ImageFont.truetype('Utils/Fonts/Helvetica.ttf', 47)
         self.myFont80 = ImageFont.truetype('Utils/Fonts/Helvetica.ttf', 150)
         logger.info("Gpay initialized")
 
-    def parse(self, message):
+    @commands.command(
+        name='gpay',
+        help='Send money through Google pay to a user and show receipt',
+        usage='<user> <amount>',
+    )
+    async def gpay(self, ctx, receiver: discord.Member, amount: float):
 
-        content = message.content
-        params = content.split(' ')
-        if len(params) < 3:
-            return "'$gpay' requires 2 parameters.\nExample: '$gpay <user> <amount>'"
-        if len(params) > 3:
-            return "Too many parameters bro, '$gpay' requires 2 parameters.\nExample: '$gpay <user> <amount>'"
-        if not message.mentions:
-            return "You haven't mentioned anyone bro"
-        if message.mentions[0].id == message.author.id:
-            return "You cannot send money to yourself bro"
-        if not params[2].isdigit():
-            return "You have to enter a valid amount bro"
-        if "69" in params[2]:
-            return "Mu me lele 69"
-
-        receiver = message.mentions[0]
-        amount = int(params[2])
-
-        if amount > 999999999:
-            return "You cannot send more than ₹999,999,999 bro"
-
+        if amount > 9999999:
+            await ctx.send("You cannot send more than ₹9,999,999 bro")
+            return
+        if receiver.id == ctx.author.id:
+            await ctx.send("You cannot send money to yourself bro")
+            return
+        if "69" in str(amount):
+            await ctx.send("Mu me lele 69")
+            return
+        
+        if amount == int(amount):
+            amount = int(amount)
+        else:
+            amount = round(amount, 2)
+        
         receiver_name = receiver.name
         receiver_nickname = receiver.display_name
-        author = message.author
+        author = ctx.author
         author_name = author.name
         author_nickname = author.display_name
 
-        return self.process_image(amount, receiver_name, receiver_nickname, author_name, author_nickname)
+        await receiver.avatar_url_as(static_format='png', size=256).save("Temp/gpay_receiver.png")
+
+        self.process_image(amount, receiver_name, receiver_nickname, author_name, author_nickname)
+
+        await ctx.send(file=discord.File("Temp/gpay_edited.png"))
+
 
     def process_image(self, amount, receiver_name, receiver_nickname, author_name, author_nickname):
-
         # Open an Image
         self.img = Image.open("Modules/Gpay/gpay.png")
 
@@ -99,5 +104,3 @@ class Gpay:
 
         # Save the edited image
         self.img.save("Temp/gpay_edited.png")
-
-        return "success"
